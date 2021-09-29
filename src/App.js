@@ -1,25 +1,67 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
 
-function App() {
+import "firebase/compat/firestore";
+import firebase from "./utils/firebase";
+
+import "./App.scss";
+
+const db = firebase.firestore(firebase);
+
+export default function App() {
+  const [name, setName] = useState("");
+  const [age, setAge] = useState("");
+  const [email, setEmail] = useState("");
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+
+    db.collection("personas")
+      .add({
+        name: name,
+        age: age,
+        email: email,
+      })
+
+      .then(() => {
+        setName("");
+        setAge("");
+        setEmail("");
+        console.log("Respuesta enviada");
+      });
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+    <div>
+      <form onSubmit={onSubmit}>
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          Nombre:
+          <input
+            type="text"
+            placeholder="Nombre"
+            onChange={(e) => setName(e.target.value)}
+            value={name}
+          />
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+        <p>
+          Año de nacimiento:
+          <input
+            type="number"
+            placeholder="año de nacimiento"
+            onChange={(e) => setAge(e.target.value)}
+            value={age}
+          />
+        </p>
+        <p>
+          E-mail:
+          <input
+            type="email"
+            placeholder="email"
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
+          />
+        </p>
+        <button>Enviar a firebase </button>
+      </form>
     </div>
   );
 }
-
-export default App;
